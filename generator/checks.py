@@ -39,4 +39,16 @@ def main():
     check("days past due is never negative", (snaps["days_past_due"] >= 0).all())
 
     written_off = snaps.loc[snaps["status"] == "written_off", ["loan_id", "snapshot_date"]]
-    wriiten_off = written_off.rename
+    wriiten_off = written_off.rename(columns={"snapshot_date": "written_off_date"})
+    after = snaps.merge(written_off, on="loan_id")
+    check("no snapshots after a write off", not (after["snapshot_date"] > after["written_off_date"]).any())
+
+    joined = loans.merge(borrowers, on="borrower_id")
+    default_rate = joined.groupby("bureau_band")["first_default_month"].apply(lambda s: s.notna().mean())
+    print("\nShare of loans that reached 90+ days past due, by bureau band:")
+    print((default_rate * 100).round(1).sort_values(ascending=False).astype(str) + " %")
+
+    sys.exit(0 if all(results) else 1)
+
+if __name__ == "__main__":
+    main()

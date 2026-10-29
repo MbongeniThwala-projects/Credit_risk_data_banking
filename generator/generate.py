@@ -194,3 +194,44 @@ def simulate(loans, borrowers, orig_idx, prime_orig, margin, prime, rng):
 
     snapshots = pd.concat(frames, ignore_index=True)
     first_default_month = pd.Series(pd.NaT, index=range(n), dtype="datetime64[ns]")
+    has = first_default_idx >= 0
+    first_default_month[has] = month_end[first_default_idx[has]]
+    return snapshots, first_default_month.to_numpy()
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate a synthetic South African loan book")
+    parser.add_argument("--n-loans", type=int, default=5000)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--out", default="data")
+    args = parser.parse_args()
+
+    rng = np.random.default_rng(args.seed)
+    prime = load_prime_path()
+
+    borrowers, loans, orig_idx, prime_orig, margin = build_borrowers_and_loans(
+        args.n_loans, rng, prime
+    )
+    snapshots, first_default_month = simulate(
+        loans, borrowers, orig_idx, prime_orig, margin, prime, rng
+    )
+    loans["first_default_month"] = first_default_month
+
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    borrowers.to_parquet(out / "borrowers.parquet", index=False)
+    loans.to_parquet(out / "loans.parquet", index=False)
+    snapshots.to_parquet(out / "loan_monthly_snapshots.parquet", index=False)
+
+    last = snapshots["snapshot_date"].max()
+    print(f"loans: {len(loans):,}   loan-month rows: {len(snapshots):,}")
+    print("\nShare of loans that reached 90+ days past due, by product:")
+    rate = loans.groupby("product")["first_default_month"].apply(lambda s: s.notna().mean())
+    print((rate * 100).round(1).astype(str) + " %")
+    print(f"\nDelinquency buckets in the last month ({last.date()}):")
+    print(snapshots.loc[snapshots["snapshot_date"] == last, "delinquency_bucket"].value_counts())
+    print("\nFiles written to", out.resolve())
+
+
+if __name__ == "__main__":
+    main()

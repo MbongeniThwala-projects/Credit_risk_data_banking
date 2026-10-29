@@ -2,4 +2,18 @@ This is a GCP project, so its IAM, billing and cleanup are isolated from other w
 
 We will use Terraform:
 -> Infrastructure as code makes the project reproducible:
-    anyone can rebuild it from the repo, and 'terraform destroy' removes it cleanly when the trial ends (using the free GCP). Everything is placed in `africa-south1` (Johannesburg). For real banking data, the project uses this region as its default. Datasets are split into raw, staging and marts layers so that each stage of the pipeline has a clear purpose. The pipeline service account gets only the roles it needs, with table access granted per dataset instead of project-wide, following least privilege.
+    anyone can rebuild it from the repo, and 'terraform destroy' removes it cleanly when the trial ends
+    (using the free GCP). Everything is placed in `africa-south1` (Johannesburg). For real banking data,
+    the project uses this region as its default. Datasets are split into raw, staging and marts layers so
+    that each stage of the pipeline has a clear purpose. The pipeline service account gets only the roles
+    it needs, with table access granted per dataset instead of project-wide, following least privilege.
+
+SA Loan Book Generator
+-> so the generator is anchored to the real prime-rate path (prime is the repo rate plus 3.5 percentage points),
+prices loans off prime, uses TransUnion-style bureau credit score bands on a 0 to 999 scale, and reports in ZAR across the nine provinces. 
+Loans are observed in monthly snapshots with days past due, delinquency buckets and write-offs, which is
+how arrears are tracked in practice. The generator keeps the true first-default month for every loan, so a
+probability-of-default model can be back-tested against a known answer later. The data is fully synthetic,
+so there is no personal information to protect, and all behaviour parameters are illustrative rather than
+calibrated to any bank. Automated checks confirm the balances roll forward correctly before anything is
+loaded into BigQuery.

@@ -46,7 +46,7 @@ BUREAU_BAND_LABELS = [
 #Margin over prime is a range: the best credit scores get the low end
 PRODUCTS = {
     "home_loan": {
-        "share": .20,
+        "share": 0.20,
         "terms": [240, 300],
         "term_probs": [.5, .5],
         "margin_range": (-1.0, 1.5),
@@ -56,7 +56,7 @@ PRODUCTS = {
         "base_logit": -6.1
     },
     "vehicle_asset_finance": {
-        "share": .30,
+        "share": 0.30,
         "terms": [48, 60, 72, 84],
         "term_probs": [.1, .3, .4, .2],
         "margin_range": (.0, 4.0),
@@ -66,7 +66,7 @@ PRODUCTS = {
         "base_logit": -5.1
     },
     "home_loan": {
-        "share": .50,
+        "share": 0.50,
         "terms": [12, 24, 36, 48, 60, 72],
         "term_probs": [.05, .15, .25, .20, .20, .15],
         "margin_range": (3.0, 12.0),
