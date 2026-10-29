@@ -30,9 +30,9 @@ def main():
     flow_error = (
         snaps["opening_balance"]
         + snaps["interest_charged"]
-        + snaps["amount_paid"]
-        + snaps["written_off_amount"]
-        + snaps["closing_balance"]
+        - snaps["amount_paid"]
+        - snaps["written_off_amount"]
+        - snaps["closing_balance"]
     ).abs()
     check("balance roll forward ties out (within R1)", flow_error.max() < 1.0)
     check("no negative balance", (snaps["closing_balance"] >= 0).all())
