@@ -24,7 +24,7 @@ def main():
         print(f"{'PASS' if passed else 'FAIL'} {name}")
 
     check("loan_id is unique", loans["loan_id"].is_unique)
-    check("every loan had a borrower", loans["borrower_id"].isin("borrowers_id").all())
+    check("every loan had a borrower", loans["borrower_id"].isin(borrowers["borrower_id"]).all())
     check("one snapshot per loan per month", not snaps.duplicated(["loan_id", "snapshot_date"]).any())
 
     flow_error = (
@@ -39,7 +39,7 @@ def main():
     check("days past due is never negative", (snaps["days_past_due"] >= 0).all())
 
     written_off = snaps.loc[snaps["status"] == "written_off", ["loan_id", "snapshot_date"]]
-    wriiten_off = written_off.rename(columns={"snapshot_date": "written_off_date"})
+    written_off = written_off.rename(columns={"snapshot_date": "written_off_date"})
     after = snaps.merge(written_off, on="loan_id")
     check("no snapshots after a write off", not (after["snapshot_date"] > after["written_off_date"]).any())
 

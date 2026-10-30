@@ -38,7 +38,7 @@ BUREAU_BAND_LABELS = [
     "Unfavourable",
     "Below average",
     "Average",
-    "favourable",
+    "Favourable",
     "Good",
     "Excellent"
 ]
@@ -51,7 +51,7 @@ PRODUCTS = {
         "term_probs": [.5, .5],
         "margin_range": (-1.0, 1.5),
         "dti_range": (.18, .32),
-        "principal_range": (300_000, 600_000),
+        "principal_range": (300_000, 6_000_000),
         "ltv_range": (.70, 1.00),
         "base_logit": -6.1
     },
@@ -65,7 +65,7 @@ PRODUCTS = {
         "ltv_range": (.85, 1.10),
         "base_logit": -5.1
     },
-    "home_loan": {
+    "personal_loan": {
         "share": 0.50,
         "terms": [12, 24, 36, 48, 60, 72],
         "term_probs": [.05, .15, .25, .20, .20, .15],

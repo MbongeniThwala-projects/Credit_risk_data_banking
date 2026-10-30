@@ -173,7 +173,7 @@ def simulate(loans, borrowers, orig_idx, prime_orig, margin, prime, rng):
                     "interest_charged": interest.round(2),
                     "instalment_due": instalment.round(2),
                     "amount_paid": paid.round(2),
-                    "wriitten_off_amount": written_off_amount.round(2),
+                    "written_off_amount": written_off_amount.round(2),
                     "closing_balance": closing.round(2),
                     "arrears_amount": new_arrears.round(2),
                     "days_past_due": dpd,
@@ -189,7 +189,7 @@ def simulate(loans, borrowers, orig_idx, prime_orig, margin, prime, rng):
         months_missed[i] = new_m
         first_dpd[i] = d0
         defaulted[i] = now_def
-        closing[i] = newly_closed
+        closed[i] = newly_closed
         n_rem[i] = np.maximum(n_rem[i] - 1, 0)
 
     snapshots = pd.concat(frames, ignore_index=True)
