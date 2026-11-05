@@ -50,7 +50,8 @@ def build_borrowers_and_loans(n, rng, prime):
         k = len(idx)
         lo, hi = cfg["margin_range"]
         risk = np.clip((750 - score[idx]) / 450, 0, 1)
-        margin[idx] = rng.choice(cfg["terms"], size=k, p=cfg["term_probs"])
+        margin[idx] = np.clip(lo + (hi - lo) * risk + rng.normal(0, .25, k), lo, hi)   # corrected: margin line
+        term[idx] = rng.choice(cfg["terms"], size=k, p=cfg["term_probs"])              # corrected: term line
 
         r = (prime_orig[idx] + margin[idx]) / 100 / 12
         target_instalment = rng.uniform(*cfg["dti_range"], k) * income[idx]
