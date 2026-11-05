@@ -9,6 +9,7 @@ locals {
     "iam.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "serviceusage.googleapis.com",
+    "storage.googleapis.com"
   ]
 }
 
@@ -65,4 +66,25 @@ resource "google_bigquery_dataset_iam_member" "pipeline_editor" {
   dataset_id = each.value.dataset_id
   role       = "roles/bigquery.dataEditor"
   member     = "serviceAccount:${google_service_account.pipeline.email}"
+}
+
+# Cloud Storage landing zone for raw extracts
+resource "google_storage_bucket" "landing" {
+  name = "${var.project_id}-landing"
+  location = var.region
+  storage_class = "STANDARD"
+  uniform_bucket_level_access = true
+  public_access_prevention = "enforced"
+
+  #lets terraform destroy remove the bucket even when it contains files
+  force_destroy = true
+
+  labels = {
+    labels = {
+        project = "credit-risk"
+        env = "dev"
+    }
+
+    depends_on =
+  }
 }
