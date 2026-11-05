@@ -70,21 +70,26 @@ resource "google_bigquery_dataset_iam_member" "pipeline_editor" {
 
 # Cloud Storage landing zone for raw extracts
 resource "google_storage_bucket" "landing" {
-  name = "${var.project_id}-landing"
-  location = var.region
-  storage_class = "STANDARD"
+  name                        = "${var.project_id}-landing"
+  location                    = var.region
+  storage_class               = "STANDARD"
   uniform_bucket_level_access = true
-  public_access_prevention = "enforced"
+  public_access_prevention    = "enforced"
 
   #lets terraform destroy remove the bucket even when it contains files
   force_destroy = true
 
   labels = {
-    labels = {
-        project = "credit-risk"
-        env = "dev"
-    }
-
-    depends_on =
+    project = "credit-risk"
+    env     = "dev"
   }
+
+  depends_on = [google_project_service.apis]
+}
+
+#the pipeline account can read and write files in this bucket only
+resource "google_storage_bucket_iam_member" "pipeline_landing_admin" {
+  bucket = google_storage_bucket.landing.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.pipeline.email}"
 }

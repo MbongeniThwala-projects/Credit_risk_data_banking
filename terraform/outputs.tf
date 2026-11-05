@@ -7,3 +7,8 @@ output "pipeline_service_account_email" {
   description = "Service account used by the pipeline"
   value       = google_service_account.pipeline.email
 }
+
+output "landing_bucket" {
+  description = "Cloud Storage bucket for raw extracts"
+  value       = google_storage_bucket.landing.name
+}
