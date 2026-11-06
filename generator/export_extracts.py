@@ -49,6 +49,9 @@ def plausibility_problems(borrowers, loans, snaps):
 
 
 def write_extracts(borrowers, loans, snaps, out):
+
+    loans = loans.assign(first_default_month=loans["first_default_month"].astype("datetime64[us]"))
+
     for name in ["loan_snapshots", "loans", "borrowers"]:
         shutil.rmtree(out / name, ignore_errors=True)
 
