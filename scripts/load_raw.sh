@@ -25,6 +25,7 @@ bq load \
     --replace \
     --time_partitioning_type=MONTH \
     --time_partitioning_field=snapshot_date \
+    --require_partition_filter=true \
     --clustering_fields=status,delinquency_bucket,loan_id \
     raw.loan_monthly_snapshots \
     "${BUCKET}/loan_snapshots/*"
